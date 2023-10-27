@@ -1,0 +1,134 @@
+{
+  "name": "slow_wiredtiger_checkpoint_operations_in_mongodb",
+  "description": "This incident type refers to a situation where MongoDB, a database management system, experiences slow WiredTiger checkpoint operations. WiredTiger is the default storage engine used in MongoDB. Checkpoint operations are used to save the current state of the database to disk. Slow checkpoint operations can cause performance issues and may result in slower response times or even downtime for the database. This type of incident can affect the availability and reliability of the database and may require immediate attention by the software engineer responsible for managing the database.",
+  "params": [
+    {
+      "name": "STORAGE_ENGINE",
+      "value": ""
+    },
+    {
+      "name": "CHECKPOINT_INTERVAL",
+      "value": ""
+    },
+    {
+      "name": "CACHE_SIZE",
+      "value": ""
+    },
+    {
+      "name": "CHECKPOINT_THRESHOLD",
+      "value": ""
+    },
+    {
+      "name": "MONGODB_CONFIG_FILE",
+      "value": ""
+    },
+    {
+      "name": "MONGODB_DATA_DIRECTORY",
+      "value": ""
+    },
+    {
+      "name": "HOST_NAME",
+      "value": ""
+    },
+    {
+      "name": "K8S_CLUSTER_NAME",
+      "value": ""
+    },
+    {
+      "name": "NAMESPACE",
+      "value": ""
+    }
+  ],
+  "cells": [
+    {
+      "name": "cell_1",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Slow WiredTiger Checkpoint Operations in MongoDB.\nThis incident type refers to a situation where MongoDB, a database management system, experiences slow WiredTiger checkpoint operations. WiredTiger is the default storage engine used in MongoDB. Checkpoint operations are used to save the current state of the database to disk. Slow checkpoint operations can cause performance issues and may result in slower response times or even downtime for the database. This type of incident can affect the availability and reliability of the database and may require immediate attention by the software engineer responsible for managing the database."
+    },
+    {
+      "name": "cell_2",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check MongoDB server status and get current WiredTiger statistics"
+    },
+    {
+      "name": "cell_3",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `mongo --eval \"db.serverStatus().wiredTiger\"`"
+    },
+    {
+      "name": "cell_4",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check disk usage and availability for MongoDB data directory"
+    },
+    {
+      "name": "cell_5",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `df -h ${MONGODB_DATA_DIRECTORY}`"
+    },
+    {
+      "name": "cell_6",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check MongoDB WiredTiger cache usage and eviction statistics"
+    },
+    {
+      "name": "cell_7",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `mongo --eval \"db.serverStatus().wiredTiger.cache\"`"
+    },
+    {
+      "name": "cell_8",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check MongoDB WiredTiger checkpoint statistics"
+    },
+    {
+      "name": "cell_9",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `mongo --eval \"db.serverStatus().wiredTiger[\"checkpoint\"]\"`"
+    },
+    {
+      "name": "cell_10",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check MongoDB WiredTiger thread statistics"
+    },
+    {
+      "name": "cell_11",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `mongo --eval \"db.serverStatus().wiredTiger[\"thread-yield\"]\"`"
+    },
+    {
+      "name": "cell_12",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check MongoDB WiredTiger transaction statistics"
+    },
+    {
+      "name": "cell_13",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `mongo --eval \"db.serverStatus().wiredTiger[\"transaction\"]\"`"
+    },
+    {
+      "name": "cell_14",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Identify the root cause of slow checkpoint operations and optimize the configuration of MongoDB. This can involve tuning the checkpoint interval and checkpoint threshold values, adjusting the cache size, or changing the storage engine settings."
+    },
+    {
+      "name": "cell_15",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_config_mongodb($STORAGE_ENGINE, $CHECKPOINT_INTERVAL, $CACHE_SIZE, $CHECKPOINT_THRESHOLD, $MONGODB_CONFIG_FILE)"
+    }
+  ]
+}
